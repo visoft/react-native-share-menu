@@ -6,13 +6,15 @@
 //
 //  Created by Gustavo Parreira on 26/07/2020.
 //
-//  Modified by Damien White on 18/06/2022.
+//  Modified by Damien White on 2024-10-09.
 
 import Foundation
 import MobileCoreServices
 import UIKit
 import Social
 import RNShareMenu
+
+@available(iOSApplicationExtension, unavailable)
 
 class ShareViewController: SLComposeServiceViewController {
   var hostAppId: String?
@@ -227,21 +229,19 @@ class ShareViewController: SLComposeServiceViewController {
       return
     }
     
-    let url = URL(string: urlScheme)
-    let selectorOpenURL = sel_registerName("openURL:")
-    var responder: UIResponder? = self
-    
-    while responder != nil {
-      if responder?.responds(to: selectorOpenURL) == true {
-        responder?.perform(selectorOpenURL, with: url)
-      }
-      responder = responder!.next
+    // fix for iOS 18 https://github.com/Expensify/react-native-share-menu/issues/318#issue-2543801893
+    guard let url = URL(string: urlScheme) else {
+      exit(withError: NO_INFO_PLIST_URL_SCHEME_ERROR)
+      return //be safe
     }
-    
-    completeRequest()
+    UIApplication.shared.open(url, options: [:], completionHandler: completeRequest)
   }
   
-  func completeRequest() {
+  func completeRequest(success: Bool) {
+    if !success {
+      cancelRequest()
+      return
+    }
     // Inform the host that we're done, so it un-blocks its UI. Note: Alternatively you could call super's -didSelectPost, which will similarly complete the extension context.
     extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
   }
