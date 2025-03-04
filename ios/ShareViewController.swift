@@ -6,13 +6,14 @@
 //
 //  Created by Gustavo Parreira on 26/07/2020.
 //
-//  Modified by Damien White on 2024-10-09.
+//  Modified by Damien White on 2025-03-04.
 
 import Foundation
 import MobileCoreServices
 import UIKit
 import Social
 import RNShareMenu
+import UniformTypeIdentifiers
 
 @available(iOSApplicationExtension, unavailable)
 
@@ -136,7 +137,7 @@ class ShareViewController: SLComposeServiceViewController {
   }
   
   func storeText(withProvider provider: NSItemProvider, _ semaphore: DispatchSemaphore) {
-    provider.loadItem(forTypeIdentifier: kUTTypeText as String, options: nil) { (data, error) in
+    provider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { (data, error) in
       guard (error == nil) else {
         self.exit(withError: error.debugDescription)
         return
@@ -152,7 +153,7 @@ class ShareViewController: SLComposeServiceViewController {
   }
   
   func storeUrl(withProvider provider: NSItemProvider, _ semaphore: DispatchSemaphore) {
-    provider.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil) { (data, error) in
+    provider.loadItem(forTypeIdentifier: UTType.url.identifier as String, options: nil) { (data, error) in
       guard (error == nil) else {
         self.exit(withError: error.debugDescription)
         return
@@ -168,7 +169,7 @@ class ShareViewController: SLComposeServiceViewController {
   }
   
   func storeFile(withProvider provider: NSItemProvider, _ semaphore: DispatchSemaphore) {
-    provider.loadItem(forTypeIdentifier: kUTTypeData as String, options: nil) { (data, error) in
+    provider.loadItem(forTypeIdentifier: UTType.data.identifier, options: nil) { (data, error) in
       guard (error == nil) else {
         self.exit(withError: error.debugDescription)
         return
